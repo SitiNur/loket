@@ -71,7 +71,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><?php echo $row['description']; ?></td>
                             <td><?php echo $row['datetime']; ?></td>
                             <td><?php echo $row['location']; ?></td>
-                            <td>edit delete</td>
+                            <td> 
+                                 <a id="edit_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalEdit" class="btn btn-circle btn-warning btn-lg edit">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a id="del_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalDelete" class="btn btn-circle btn-danger btn-xs del">
+                                    <i class="fa fa-trash"></i>
+                                 </a>
+                            </td>
                         </tr>
                     <?php } ?>
                     
@@ -120,8 +127,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <div class="additional">
                                 </div>
                             </div>
-                           
-                       
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -133,24 +138,58 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
    <!-- Modal Add end -->
 
-    <!-- Modal Add start-->
-        <div class="modal fade" id="modalDetail" role="dialog">
+   <!-- Modal Edit start-->
+        <div class="modal fade" id="modalEdit" role="dialog">
             <div class="modal-dialog modal-md">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title"></h4>
+                        <h4 class="modal-title">Add Event</h4>
                     </div>
+                     <form id="addForm" action="<?php echo base_url()?>dashboard/addEvent" method="post">
+                    <input id="id_event" type="hidden" name="id_event">
                     <div class="modal-body">
+                            <div class="form-group">
+                                <label>Event : </label>
+                                <input id="eTitle" type="text" name="title">
+                            </div>
+                            <div class="form-group">
+                                <label>Description : </label>
+                                <input id="eDescription" type="text" name="description">
+                            </div>
+                            <div class="form-group">
+                                <label>Date and Time : </label>
+                                <input id="eDatetime" type="text" name="datetime">
+                            </div>
+                            <div class="form-group">
+                                <label>Location : </label>
+                                <input id="eLocation" type="text" name="location">
+                            </div>
+                             <div class="form-group">
+                                <label>Type Ticket : </label>
+                                <input id="eTypeTicket" class="typeTicket" type="number" name="typeTicket">
+                            </div>
+                    
+                            <div class="form-group ">
+                                <label>Ticket : </label>
+                                <label>Price</label>
+                                <div class="ticket">
+                                    
+                                </div>
+                            </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success save">Save</button>
+                        <button type="button" class="btn btn-success edit">Edit</button>
+                        <button type="button" class="btn btn-success update">Save</button>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>
-   <!-- Modal Add end -->
+   <!-- Modal Edit end -->
+
+    
 
     <!-- Modal Add start-->
         <div class="modal fade" id="modalDelete" role="dialog">
@@ -242,6 +281,85 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     });
 
+    $('body').on('click', ".edit", function(){
+        var id_event = $(this).attr('id');
+        id_event = id_event.split('_'); 
+        id_event = id_event[1];
+        $('#id_event').val(id_event);
+        var fd = new FormData();
+        fd.append('id_event',id_event);
+      
+        $.ajax({
+            url: '<?php echo base_url()?>dashboard/detailEvent',
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            dataType : 'JSON' ,
+            success: function(res){
+               
+                if(res['return'] == 'true'){
+                    $('#eTitle').val(res['data']['event']['title']);
+                    $('#eDescription').val(res['data']['event']['description']);
+                    $('#eDatetime').val(res['data']['event']['datetime']);
+                    $('#eLocation').val(res['data']['event']['location']);
+                    
+                    var length = res['data']['ticket'].length;
+                    console.log(res['data']['ticket']);
+                    for(var i=0; i<length; i++){
+                        $(".ticket").append(
+                            '<input type="hidden" name="id_ticket[]" value="'+res['data']['ticket'][i]['id_ticket']+'">'+
+                            '<input type="text" name="eTicket[]" value="'+res['data']['ticket'][i]['name']+'">'+
+                            '<input type="text" name="ePrice[]" value="'+res['data']['ticket'][i]['price']+'">');
+
+                    }
+                }
+            },
+        });
+
+    });
+
+    $('body').on('click', ".update", function(){
+        
+        var fd = new FormData();
+        fd.append('id_event',  $('#id_event').val());
+        fd.append('title', $('#eTitle').val());
+        fd.append('description', $('#eDescription').val());
+        fd.append('datetime', $('#eDatetime').val());
+        fd.append('location', $('#eLocation').val());
+        fd.append('typeTicket', $('#eTypeTicket').val());
+
+        var id_ticket = [];
+        $("input[name^='id_ticket']").each(function () {
+            id_ticket.push($(this).val());
+        });
+        fd.append('id_ticket',  id_ticket);
+
+        var ticket = [];
+        $("input[name^='eTicket']").each(function () {
+            ticket.push($(this).val());
+        });
+        fd.append('ticket',  ticket);
+
+        var price = [];
+        $("input[name^='ePrice']").each(function(){
+            price.push(this.value);
+        });
+        fd.append('price', price);
+
+        $.ajax({
+            url: '<?php echo base_url()?>dashboard/updateEvent',
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            dataType : 'JSON' ,
+            success: function(data){
+
+            },
+        });
+
+    });
 
 
 </script>
