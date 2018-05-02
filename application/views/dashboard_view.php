@@ -45,7 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- Begin page content -->
     <div class="container">
         <div class="page-header">
-            <h2>Dashboard</h2>
+            <h2>Dashboard</h2> 
             <div class="btn-group btn-group-devided">
                 <a data-toggle="modal" href="#modalAdd" class="btn btn-circle btn-primary add">
                     <i class="fa fa-plus"></i>
@@ -58,7 +58,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <thead>
                     <tr>
                         <th class="all">Event</th>
-                        <th class="all">Category</th>
                         <th class="all">Description</th>
                         <th class="all">Date and Time</th>
                         <th class="all">Location</th>
@@ -69,7 +68,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <?php foreach ($result as $row) { ?>
                         <tr>
                             <td><?php echo $row['title']; ?></td>
-                            <td><?php echo $row['category']; ?></td>
                             <td><?php echo $row['description']; ?></td>
                             <td><?php echo $row['datetime']; ?></td>
                             <td><?php echo $row['location']; ?></td>
@@ -95,33 +93,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <div class="modal-body">
                             <div class="form-group">
                                 <label>Event : </label>
-                                <input type="text" name="title">
+                                <input id="title" type="text" name="title">
                             </div>
                             <div class="form-group">
                                 <label>Description : </label>
-                                <input type="text" name="description">
+                                <input id="description" type="text" name="description">
                             </div>
                             <div class="form-group">
                                 <label>Date and Time : </label>
-                                <input type="text" name="datetime">
+                                <input id="datetime" type="text" name="datetime">
                             </div>
                             <div class="form-group">
                                 <label>Location : </label>
-                                <input type="text" name="location">
+                                <input id="location" type="text" name="location">
                             </div>
                              <div class="form-group">
                                 <label>Type Ticket : </label>
-                                <input class="typeTicket" type="number" name="typeTicket">
+                                <input id="typeTicket" class="typeTicket" type="number" name="typeTicket">
                             </div>
                     
                             <div class="form-group">
-                                <label>Type Ticket : </label>
+                                <label>Ticket : </label>
                                 <input type="text" name="ticket[]">
                                 <label>Price</label>
                                 <input type="number" name="price[]">
-
-                                <div class="ticket">
-                                   
+                                <div class="additional">
                                 </div>
                             </div>
                            
@@ -187,6 +183,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </body>
 
 <script type="text/javascript">
+    var id_user = '<?php echo $this->session->userdata['id_user']?>'; 
+
     $('#myTable').DataTable( {
     responsive: true,
     "columnDefs": [
@@ -197,29 +195,42 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     
     $('body').on('change', ".typeTicket", function(){
-        $(".ticket").html('');
-        $(".ticket").append('<br>'+
-                            '<input type="text" name="b">'+
-                            '<input type="number" name="c">');
-
+        $(".additional").html('');
         var typeTicket = $('.typeTicket').val();
-        // for (var i=0; i<typeTicket-1; i++){
-        //     $(".ticket").append('<br>'+
-        //                     '<input type="text" name="b">'+
-        //                     '<input type="number" name="c">');
-        // }
+        for (var i=0; i<typeTicket-1; i++){
+            $(".additional").append('<br>'+
+                            '<input type="text" name="ticket[]">'+
+                            '<input type="number" name="price[]">');
+        }
         
     });
 
 
     $('body').on('click', ".save", function(){
         var form = $("#addForm");
-      
-        var b = $("input[name=b]").val();
-        console.log(b);
+        var fd = new FormData();
+        fd.append('id_user',id_user);
+        fd.append('title', $('#title').val());
+        fd.append('description', $('#description').val());
+        fd.append('datetime', $('#datetime').val());
+        fd.append('location', $('#location').val());
+        fd.append('typeTicket', $('#typeTicket').val());
+
+        var ticket = [];
+        $("input[name^='ticket']").each(function () {
+            ticket.push($(this).val());
+        });
+        fd.append('ticket',  ticket);
+
+        var price = [];
+        $("input[name^='price']").each(function(){
+            price.push(this.value);
+        });
+        fd.append('price', price);
+
         $.ajax({
             url: form.attr("action"),
-            data: form.serialize(),
+            data: fd,
             processData: false,
             contentType: false,
             type: 'POST',

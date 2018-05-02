@@ -21,10 +21,9 @@ class Login_model extends CI_Model{
     }
 
     function getListEvent($id_user){
-        $this->db->select('id_event, title, description, datetime, location, category');
+        $this->db->select('id_event, title, description, datetime, location');
         $this->db->where(array('id_user'=> $id_user));
         $this->db->from('tb_event');
-        $this->db->join('tb_category', 'tb_category.id_category = tb_event.id_category');
         $query = $this->db->get();
         $result = $query->result_array();
         return $result;

@@ -17,30 +17,34 @@ class Dashboard extends CI_Controller {
 	}
 
 	public function addEvent(){
-		// $event= array(
-		// 	'id_user' => $this->input->post('id_user'),
-		// 	'title' => $this->input->post('title'),
-		// 	'description' => $this->input->post('description'),
-		// 	'datetime' => $this->input->post('datetime'),
-		// 	'location' => $this->input->post('location'),
+		$event= array(
+			'id_user' => $this->input->post('id_user'),
+			'title' => $this->input->post('title'),
+			'description' => $this->input->post('description'),
+			'datetime' => $this->input->post('datetime'),
+			'location' => $this->input->post('location'),
 			
-		// );
+		);
 
-		$ticket = array();
-		$price = array();
-		// foreach ($this->input->post('ticket') as $i) {
-		// 	array_push($ticket, $i);
-		// }
-
-		// foreach ($this->input->post('price') as $i) {
-		// 	array_push($price, $i);
-		// }
-		// $dataTicket = array(
-		// 	'ticket' => $ticket,
-		// 	'price' => $price
-		// );
-		print_r(($this->input->post('b')));
-		//$this->Dashboard_model->addEvent($event, $ticket);
+		$typeTicket = intval($this->input->post('typeTicket'));
+		$ticket = $this->input->post('ticket');
+		$ticket = explode(',', $ticket);
+		$price = $this->input->post('price');
+		$price = explode(',', $price);
+		$dataTicket = array();
+		
+		for($i=0; $i<$typeTicket; $i++){
+			$dataTicket[$i] = array(
+				'name' => $ticket[$i],
+				'price' => $price[$i],
+			); 
+		}
+		
+		if($this->Dashboard_model->addEvent($event, $dataTicket)){
+			echo json_encode(array('return'=>'true'));
+		}else{
+			echo json_encode(array('return'=>'false'));
+		}
 	
 	}
 
