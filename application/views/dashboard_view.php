@@ -36,6 +36,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <ul class="nav navbar-nav">
             <li class="active"> <a href="#">Dashboard</a></li>
             <li><a href="">Profile</a></li>
+             <li><a href="">Hello <?php echo $this->session->userdata['first_name'];?></a></li>
             <li><a href="<?php echo base_url()?>login/logout">Log Out</a></li>
           </ul>
         </div><!--/.nav-collapse -->
@@ -81,11 +82,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </td>
                         </tr>
                     <?php } ?>
-                    
                 </tbody>
+            </table>
         </div>
-
-
     </div>
 
     <!-- Modal Add start-->
@@ -226,11 +225,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     $('#myTable').DataTable( {
     responsive: true,
-    "columnDefs": [
-    { "searchable": false, "targets": 4 }
-  ]
+        "columnDefs": [
+        { "searchable": false, "targets": 4 }
+    ]
    
-} );
+    });
 
     
     $('body').on('change', ".typeTicket", function(){

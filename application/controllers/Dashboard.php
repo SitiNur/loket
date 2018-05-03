@@ -12,8 +12,14 @@ class Dashboard extends CI_Controller {
 
 	public function index()
 	{
-		$data['result'] = $this->Login_model->getListEvent($res['id_user']);
-		$this->load->view('dashboard_view', $data);
+		if($this->session->userdata('id_user')){
+			$id_user = $this->session->userdata['id_user'];
+			$data['result'] = $this->Login_model->getListEvent($id_user);
+			$this->load->view('dashboard_view', $data);
+		}else{
+			redirect(base_url());
+		}
+		
 	}
 
 	public function addEvent(){
@@ -82,15 +88,14 @@ class Dashboard extends CI_Controller {
 				'id_ticket' =>$id_ticket[$i],
 				'name' => $ticket[$i],
 				'price' => $price[$i],
-			); 
-			echo json_encode($dataTicket[$i]);
+			); 	
 		}
 		
-		// if($this->Dashboard_model->updateEvent($id_event, $event, $dataTicket)){
-		// 	echo json_encode(array('return'=>'true'));
-		// }else{
-		// 	echo json_encode(array('return'=>'false'));
-		// }
+		if($this->Dashboard_model->updateEvent($id_event, $event, $dataTicket)){
+			echo json_encode(array('return'=>'true'));
+		}else{
+			echo json_encode(array('return'=>'false'));
+		}
 	
 	}
 }

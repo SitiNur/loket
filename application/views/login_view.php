@@ -7,6 +7,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script src="<?php echo base_url()?>assets/js/bootstrap.min.js"></script>
 
  -->
+<?php if($notif !="" && $notif =="login success") { 
+	redirect(base_url('/dashboard'));
+}?>
+
  <head>
  	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -46,11 +50,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         Login<i class="glyphicon glyphicon-log-in"></i>
                     </button>
                    </form>
-                    	<h2 style="">OR</h2>
-                   
-                    <button id="btnLoginTwitter" class="btn btn-default" style="width: 100%">
-                    	<img src="<?php echo base_url()?>assets/img/twitter.png" style="width: 100%">
-                    </button>
+                    <h2 style="">OR</h2>
+                    <a href="<?php echo base_url()?>twitter/auth">
+                    	<img src="<?php echo base_url();?>assets/img/twitter.png" alt="twitter-img" style="width: 100%"/>
+                    </a>
                 </div>
             </div>
     </div>
@@ -58,7 +61,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	
 </body>
 
-<?php if($notif !="") { ?>
+<?php if($notif !="" && $notif != "login success") { ?>
 	<script type="text/javascript">
 		alert("<?php echo $notif?>");
 	</script>

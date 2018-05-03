@@ -12,12 +12,10 @@ class Login extends CI_Controller {
 
 	public function index()
 	{
-		if(!isset($_SESSION)){
-			session_start();
-		}
-
+		session_destroy();
+		session_start();
 		$data['notif']="";
-		$this->load->view('login_view');
+		$this->load->view('login_view', $data);
 	}
 
 	public function login(){
@@ -28,12 +26,13 @@ class Login extends CI_Controller {
 		$res = $this->Login_model->login($data);
 		
 		if($res != false){
-			$arr = array(
-				'id_user'=>$res['id_user'],
-			);
-			$this->session->set_userdata($arr);
-			$data['result'] = $this->Login_model->getListEvent($res['id_user']);
-			$this->load->view('dashboard_view', $data);
+			
+
+			$this->session->set_userdata('id_user', $res['id_user']);
+			$this->session->set_userdata('first_name', $res['first_name']);
+
+			$data['notif']="login success";
+			$this->load->view('Login_view', $data);
 		}else{
 			$data['notif']="Anda tidak terdaftar!";
 			$this->load->view('Login_view', $data);
