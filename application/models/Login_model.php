@@ -24,6 +24,7 @@ class Login_model extends CI_Model{
         $this->db->select('id_event, title, description, datetime, location');
         $this->db->where(array('id_user'=> $id_user));
         $this->db->from('tb_event');
+        $this->db->join('tb_location', 'tb_event.id_location = tb_location.id_location');
         $query = $this->db->get();
         $result = $query->result_array();
         return $result;

@@ -140,14 +140,15 @@ class Twitter extends CI_Controller
 		}
 	}
 	
-	public function post($in_reply_to)
+	public function post()
 	{
-		//$message = $this->input->post('message');
-		$message ="Test post twitter";
+		$share_link = $this->input->post('share_link');
+		$message = "(".uniqid().") Lets check our event ".$share_link;
 		if(!$message || mb_strlen($message) > 140 || mb_strlen($message) < 1)
 		{
 			// Restrictions error. Notification here.
-			redirect(base_url('/'));
+			$return = "Restrictions Error";
+			print_r($return);
 		}
 		else
 		{
@@ -164,19 +165,20 @@ class Twitter extends CI_Controller
 				{
 					$data = array(
 						'status' => $message,
-						'in_reply_to_status_id' => $in_reply_to
 					);
 					$result = $this->connection->post('statuses/update', $data);
 
 					if(!isset($result->errors))
 					{
 						// Everything is OK
-						redirect(base_url('/'));
+						//redirect(base_url('/'));
+						print_r("OK");
 					}
 					else
 					{
 						// Error, message hasn't been published
-						redirect(base_url('/'));
+						//redirect(base_url('/'));
+						print_r($result->errors);
 					}
 				}
 			}

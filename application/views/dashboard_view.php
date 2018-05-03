@@ -13,8 +13,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <link href="<?php echo base_url()?>assets/css/dashboard.css" rel="stylesheet" id="dashboard-css">
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>   
 
-    <script src="<?php echo base_url()?>assets/plugins/datatables/datatables.min.js"></script>
-    <script src="<?php echo base_url()?>assets/plugins/datatables/datatables.bootstrap.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css"/>
+
+    <!-- Bootstrap Date-Picker Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css"/>
 
  </head>
 
@@ -30,7 +36,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">LOKET</a>
+          <!-- <a class="navbar-brand" href="#">LOKET</a> -->
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -46,23 +52,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- Begin page content -->
     <div class="container">
         <div class="page-header">
-            <h2>Dashboard</h2> 
-            <div class="btn-group btn-group-devided">
-                <a data-toggle="modal" href="#modalAdd" class="btn btn-circle btn-primary add">
-                    <i class="fa fa-plus"></i>
-                         <span class="hidden-xs"> Add </span>
+            <h3 style="width: 50%">Dashboard</h3> 
+             <div class="btn-group btn-group-devided">
+                <a data-toggle="modal" href="#modalAdd" class="btn btn-circle btn-primary add">Add Event
                 </a>
             </div>
         </div>
+
         <div>
-            <table class="table table-striped table-bordered table-hover dt-responsive" width="100%" id="myTable">
+            <table class="table table-striped table-bordered table-hover" width="100%" id="myTable">
                 <thead>
                     <tr>
-                        <th class="all">Event</th>
-                        <th class="all">Description</th>
-                        <th class="all">Date and Time</th>
-                        <th class="all">Location</th>
-                        <th class="all">Action</th> 
+                        <th class="all" style="width: 150px">Event Title</th>
+                        <th class="all" style="width: 360px">Description</th>
+                        <th class="all" style="width: 150px">Date and Time</th>
+                        <th class="all" style="width: 100px">Location</th>
+                        <th class="all" style="width: 250px">Action</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -73,11 +78,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><?php echo $row['datetime']; ?></td>
                             <td><?php echo $row['location']; ?></td>
                             <td> 
-                                 <a id="edit_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalEdit" class="btn btn-circle btn-warning btn-lg edit">
-                                    <i class="fa fa-edit"></i>
+                                <a href="<?php echo base_url()."detail/index/".base64_encode($row['id_event'])?>" class="btn btn-default">Detail
                                 </a>
-                                <a id="del_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalDelete" class="btn btn-circle btn-danger btn-xs del">
-                                    <i class="fa fa-trash"></i>
+                                <a id="<?php echo base64_encode($row['id_event'])?>" href="#" class="btn btn-circle btn-info share">Share
+                                </a>
+                                <a id="edit_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalEdit" class="btn btn-warning edit">Edit
+                                </a>
+                                <a id="del_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalDelete" class="btn btn-danger del"> Delete
                                  </a>
                             </td>
                         </tr>
@@ -85,6 +92,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </tbody>
             </table>
         </div>
+
+
     </div>
 
     <!-- Modal Add start-->
@@ -97,35 +106,48 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                      <form id="addForm" action="<?php echo base_url()?>dashboard/addEvent" method="post">
                     <div class="modal-body">
-                            <div class="form-group">
-                                <label>Event : </label>
-                                <input id="title" type="text" name="title">
+                        <div class="form-group col-md-12">
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Event title">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Description"></textarea>
+                        </div>
+                        
+                        <div class="form-group col-md-6">
+                            <select class="form-control" id="location" placeholder="location">
+                                <option selected="true" disabled="disabled">Choose Location</option>
+                                <?php foreach ($location_option as $i) { ?>
+                                    <option value="<?php $i['id_location']?>"><?php echo $i['location']?></option>
+                                <?php } ?>
+                                
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <div class='input-group date' id='datetimepicker5'>
+                                <input id="datetime" name="datetime" type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
                             </div>
-                            <div class="form-group">
-                                <label>Description : </label>
-                                <input id="description" type="text" name="description">
-                            </div>
-                            <div class="form-group">
-                                <label>Date and Time : </label>
-                                <input id="datetime" type="text" name="datetime">
-                            </div>
-                            <div class="form-group">
-                                <label>Location : </label>
-                                <input id="location" type="text" name="location">
-                            </div>
-                             <div class="form-group">
-                                <label>Type Ticket : </label>
-                                <input id="typeTicket" class="typeTicket" type="number" name="typeTicket">
-                            </div>
-                    
-                            <div class="form-group">
-                                <label>Ticket : </label>
-                                <input type="text" name="ticket[]">
-                                <label>Price</label>
-                                <input type="number" name="price[]">
-                                <div class="additional">
-                                </div>
-                            </div>
+                        </div>
+                        <div class="form-group col-md-6" >
+                            <input id="userfile" type="file" name="userfile" class="form-control">
+                        </div>
+
+                         <div class="form-group col-md-6" >
+                            <input type="number" class="form-control typeTicket" id="typeTicket" name="typeTicket" placeholder="Number of ticket types">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" name="ticket[]" class="form-control" placeholder="Type of ticket">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="number" name="price[]" class="form-control" placeholder="Price">
+                        </div>
+                         
+                        <div class="additional">
+                        </div>
+                            
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -227,18 +249,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     responsive: true,
         "columnDefs": [
         { "searchable": false, "targets": 4 }
-    ]
+        
+    ],
+    "ordering": false
    
     });
 
+   
+    $('#datetimepicker5').datetimepicker({
+        defaultDate: new Date(),
+         format : 'YYYY-MM-DD HH:mm'
+    });
+   
     
     $('body').on('change', ".typeTicket", function(){
         $(".additional").html('');
         var typeTicket = $('.typeTicket').val();
         for (var i=0; i<typeTicket-1; i++){
-            $(".additional").append('<br>'+
-                            '<input type="text" name="ticket[]">'+
-                            '<input type="number" name="price[]">');
+            $(".additional").append('<div class="form-group col-md-6">'+
+                            '<input type="text" name="ticket[]" class="form-control" placeholder="Type of ticket">'+
+                        '</div>'+
+                        '<div class="form-group col-md-6">'+
+                            '<input type="number" name="price[]" class="form-control" placeholder="Price">'+
+                        '</div>');
         }
         
     });
@@ -248,9 +281,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         var form = $("#addForm");
         var fd = new FormData();
         fd.append('id_user',id_user);
+        fd.append('userfile', $('#userfile')[0].files[0])
         fd.append('title', $('#title').val());
         fd.append('description', $('#description').val());
-        fd.append('datetime', $('#datetime').val());
+        fd.append('datetime', $('#datetime').val()+':00');
         fd.append('location', $('#location').val());
         fd.append('typeTicket', $('#typeTicket').val());
 
@@ -360,5 +394,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     });
 
+    $('body').on('click', ".share", function(){
+        var share_link = "<?php echo base_url()?>"+"detail/index/"+$(this).attr('id');
+        
+        var fd = new FormData();
+        fd.append('share_link', share_link);
+        $.ajax({
+            url: '<?php echo base_url()?>twitter/post',
+            data: fd,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            dataType : 'JSON' ,
+            success: function(data){
 
+            },
+        });
+    });
 </script>

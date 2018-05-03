@@ -15,6 +15,7 @@ class Dashboard extends CI_Controller {
 		if($this->session->userdata('id_user')){
 			$id_user = $this->session->userdata['id_user'];
 			$data['result'] = $this->Login_model->getListEvent($id_user);
+			$data['location_option'] = $this->Dashboard_model->getLocationOption();
 			$this->load->view('dashboard_view', $data);
 		}else{
 			redirect(base_url());
@@ -23,34 +24,54 @@ class Dashboard extends CI_Controller {
 	}
 
 	public function addEvent(){
-		$event= array(
-			'id_user' => $this->input->post('id_user'),
-			'title' => $this->input->post('title'),
-			'description' => $this->input->post('description'),
-			'datetime' => $this->input->post('datetime'),
-			'location' => $this->input->post('location'),
-			
-		);
+		$config['upload_path']          = './assets/eventimage/';
+        $config['allowed_types']        = 'gif|jpg|png';
+        $config['max_size']             = 100;
+        $config['max_width']            = 1024;
+        $config['max_height']           = 768;
+        $config['encrypt_name'] 		= TRUE;
 
-		$typeTicket = intval($this->input->post('typeTicket'));
-		$ticket = $this->input->post('ticket');
-		$ticket = explode(',', $ticket);
-		$price = $this->input->post('price');
-		$price = explode(',', $price);
-		$dataTicket = array();
-		
-		for($i=0; $i<$typeTicket; $i++){
-			$dataTicket[$i] = array(
-				'name' => $ticket[$i],
-				'price' => $price[$i],
-			); 
-		}
-		
-		if($this->Dashboard_model->addEvent($event, $dataTicket)){
-			echo json_encode(array('return'=>'true'));
-		}else{
-			echo json_encode(array('return'=>'false'));
-		}
+        
+        $this->load->library('upload');
+        $this->upload->initialize($config);
+
+        if (!$this->upload->do_upload('userfile')){
+                $error = array('error' => $this->upload->display_errors());
+                echo json_encode(array('return'=>'false', 'error_msg'=>'failed to upload', 'error'=> $error));
+        }else{
+                $temp = $this->upload->data();
+                $file_path = $temp['file_path'].$temp['file_name'];
+      
+               	$event= array(
+					'id_user' => $this->input->post('id_user'),
+					'title' => $this->input->post('title'),
+					'description' => $this->input->post('description'),
+					'datetime' => $this->input->post('datetime'),
+					'location' => $this->input->post('location'),
+					'event_file' => $file_path
+				);
+
+				$typeTicket = intval($this->input->post('typeTicket'));
+				$ticket = $this->input->post('ticket');
+				$ticket = explode(',', $ticket);
+				$price = $this->input->post('price');
+				$price = explode(',', $price);
+				$dataTicket = array();
+				
+				for($i=0; $i<$typeTicket; $i++){
+					$dataTicket[$i] = array(
+						'name' => $ticket[$i],
+						'price' => $price[$i],
+					); 
+				}
+				
+				if($this->Dashboard_model->addEvent($event, $dataTicket)){
+					echo json_encode(array('return'=>'true'));
+				}else{
+					echo json_encode(array('return'=>'false'));
+				}
+        
+        }		
 	
 	}
 

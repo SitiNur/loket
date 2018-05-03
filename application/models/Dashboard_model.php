@@ -5,6 +5,11 @@ class Dashboard_model extends CI_Model{
         parent::__construct();
         
     }
+    public function getLocationOption(){
+        $query = $this->db->get('tb_location');
+        $result = $query->result_array();
+        return $result;
+    }
 
     public function addEvent($event, $dataTicket){
     	$this->db->trans_begin();
