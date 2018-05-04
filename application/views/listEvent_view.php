@@ -1,26 +1,16 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<!-- 
-<script src="<?php echo base_url()?>assets/js/jquery-3.1.1.min.js"></script>
-<link href="<?php echo base_url()?>assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="<?php echo base_url()?>assets/js/bootstrap.min.js"></script>
 
- -->
  <head>
+  <!-- jquery -->
  	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <!-- Bootsrap-->
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-    <link href="<?php echo base_url()?>assets/css/dashboard.css" rel="stylesheet" id="dashboard-css">
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>   
-
-    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css"/>
-
-    <!-- Bootstrap Date-Picker Plugin -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css"/>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script> 
+  <!-- Custom CSS -->  
+  <link href="<?php echo base_url()?>assets/css/dashboard.css" rel="stylesheet" id="dashboard-css">
+  <link href="<?php echo base_url()?>assets/css/listEvent.css" rel="stylesheet" id="listEvent-css">
 
  </head>
 
@@ -40,6 +30,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
+            <?php if(isset($this->session->userdata['first_name'])){ ?>
+              <li> <a href="<?php echo base_url()?>dashboard">Dashboard</a></li>
+            <?php } ?>
             <li class="active"> <a href="<?php echo base_url()?>listEvent">Event</a></li>
             <li><a href="#">Event Detail</a></li>
           </ul>
@@ -48,21 +41,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </nav>
 
     <!-- Begin page content -->
+    <br>
     <div class="container">
         <?php foreach ($list_event as $i) { ?>
-            <div class="col-md-6">
-                <h2><?php echo $i['title']?></h2>
-                 <a href="<?php echo base_url().'detail/index/'.base64_encode($i['id_event'])?>">
-                   <img border="0" alt="event-img" src="<?php echo base_url().$i['event_file']?>" width="50%" > 
-                </a>
-                <p><?php echo $i['description']?></p>
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div class="hovereffect">
+                    <img class="img-responsive" src="<?php echo base_url().$i['event_file']?>" alt="event-img">
+                        <div class="overlay">
+                            <h2><?php echo $i['title']?></h2>
+                            <p>
+                              <a href="<?php echo base_url().'detail/index/'.base64_encode($i['id_event'])?>">Event Detail</a>
+                            </p>
+                        </div>
+                </div>
             </div>
         <?php } ?>
-            
     </div>
 
    
-
+    <!-- Footer -->
     <footer class="footer">
       <div class="container">
         <p class="text-muted">LOKET.COM - Software Engineer Assignment</p>

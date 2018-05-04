@@ -6,7 +6,6 @@
 	    height:100%; /* important to vertically align the container */
 	    margin:0;
 	    padding:0;
-	    background-color: darkseagreen;
 	}
 	.vertical-center {
 		  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */

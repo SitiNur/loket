@@ -1,24 +1,19 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<!-- 
-<script src="<?php echo base_url()?>assets/js/jquery-3.1.1.min.js"></script>
-<link href="<?php echo base_url()?>assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="<?php echo base_url()?>assets/js/bootstrap.min.js"></script>
-
- -->
 <?php if($notif !="" && $notif =="login success") { 
 	redirect(base_url('/dashboard'));
 }?>
 
  <head>
+    <!-- jquery -->
  	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- Bootsrap-->
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!-- Custom CSS -->
 	<link href="<?php echo base_url()?>assets/css/login.css" rel="stylesheet" id="login-css">
  </head>
-
-
 <body>
 
 <div class="vertical-center">
@@ -26,7 +21,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <br/>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h1>Login</h1>
+                    <h1>Sign In</h1>
                 </div>
                 <div class="panel-body">
                 	<form action="<?php echo base_url()?>login/login" method="post">
@@ -47,13 +42,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                     </div>
                     <button id="btnLogin" class="btn btn-default" style="width: 100%">
-                        Login<i class="glyphicon glyphicon-log-in"></i>
+                        Sign In<i class="glyphicon glyphicon-log-in"></i>
                     </button>
                    </form>
-                    <h2 style="">OR</h2>
-                    <a href="<?php echo base_url()?>twitter/auth">
-                    	<img src="<?php echo base_url();?>assets/img/twitter.png" alt="twitter-img" style="width: 100%"/>
-                    </a>
+                  
+                       <h3 style="text-align: center;">OR</h3>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8" style="text-align: center;">
+                        <a href="<?php echo base_url()?>twitter/auth">
+                        	<img src="<?php echo base_url();?>assets/img/twitter.png" alt="twitter-img" style="width: 100%"/>
+                        </a>
+                    </div>
+                     <div class="col-md-2"></div>
                 </div>
             </div>
     </div>

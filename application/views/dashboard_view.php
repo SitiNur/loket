@@ -1,18 +1,17 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
-<!-- 
-<script src="<?php echo base_url()?>assets/js/jquery-3.1.1.min.js"></script>
-<link href="<?php echo base_url()?>assets/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="<?php echo base_url()?>assets/js/bootstrap.min.js"></script>
 
- -->
  <head>
+    <!-- jquery -->
  	<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <!-- Bootsrap-->
 	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>   
+    <!-- Custom CSS -->
     <link href="<?php echo base_url()?>assets/css/dashboard.css" rel="stylesheet" id="dashboard-css">
-	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>   
-
+	
+    <!-- Datatables -->
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css"/>
@@ -40,7 +39,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"> <a href="#">Dashboard</a></li>
+            <li class="active"> <a href="">Dashboard</a></li>
             <li><a href="<?php echo base_url()?>login/logout">Log Out</a></li>
           </ul>
         </div><!--/.nav-collapse -->
@@ -92,8 +91,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </tbody>
             </table>
         </div>
-
-
     </div>
 
     <!-- Modal Add start-->
@@ -226,8 +223,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
    <!-- Modal Edit end -->
 
-    
-
     <!-- Modal Add start-->
         <div class="modal fade" id="modalDelete" role="dialog">
             <div class="modal-dialog modal-md">
@@ -251,15 +246,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
    <!-- Modal Add end -->
 
+   <!-- Footer -->
     <footer class="footer">
       <div class="container">
         <p class="text-muted">LOKET.COM - Software Engineer Assignment</p>
       </div>
     </footer>
-<!-- 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
-    <script src="../../dist/js/bootstrap.min.js"></script> -->
+
 </body>
 
 <script type="text/javascript">
@@ -268,15 +261,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <?php } ?>
 
     var id_user = '<?php echo $this->session->userdata['id_user']?>'; 
-    var lastTypeTicket = "";
+    
     $('#myTable').DataTable( {
-    responsive: true,
-        "columnDefs": [
-        { "searchable": false, "targets": 4 }
-        
-    ],
-    "ordering": false
-   
+        responsive: true,
+            "columnDefs": [
+            { "searchable": false, "targets": 4 }
+            ],
+        "ordering": false
     });
 
    
@@ -285,7 +276,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
          format : 'YYYY-MM-DD HH:mm'
     });
    
-    
+    /*Create Form Ticket on Add Modal*/
     $('body').on('change', "#typeTicket", function(){
         $(".additional").html('');
         var typeTicket = $('#typeTicket').val();
@@ -304,6 +295,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
     });
 
+    /*Create Form Ticket on Edit Modal*/
     $('body').on('change', "#eTypeTicket", function(){
         var typeTicket = $('#eTypeTicket').val();
         console.log(typeTicket);
@@ -324,7 +316,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
     });
 
-
+    /*Save*/
     $('body').on('click', ".save", function(){
         var form = $("#addForm");
         var fd = new FormData();
@@ -366,6 +358,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     });
 
+    /*Edit Modal*/
     $('body').on('click', ".edit", function(){
         $(".ticket").html('');
         var id_event = $(this).attr('id');
@@ -411,8 +404,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     });
 
+    /*Update*/
     $('body').on('click', ".update", function(){
-        
         var fd = new FormData();
         fd.append('id_event',  $('#id_event').val());
         fd.append('title', $('#eTitle').val());
@@ -452,24 +445,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     });
 
-    // $('body').on('click', ".share", function(){
-    //     var share_link = "<?php echo base_url()?>"+"detail/index/"+$(this).attr('id');
-        
-    //     var fd = new FormData();
-    //     fd.append('share_link', share_link);
-    //     $.ajax({
-    //         url: '<?php echo base_url()?>twitter/post',
-    //         data: fd,
-    //         processData: false,
-    //         contentType: false,
-    //         type: 'POST',
-    //         dataType : 'JSON' ,
-    //         success: function(data){
-
-    //         },
-    //     });
-    // });
-
+    /*Delete*/
     $('body').on('click', ".del", function(){
         var id_event = $(this).attr('id');
         id_event = id_event.split('_'); 

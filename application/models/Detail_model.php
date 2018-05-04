@@ -17,7 +17,6 @@ class Detail_model extends CI_Model{
         if($num_rows > 0) {
 	        $query = $this->db->get_where('tb_ticket', array('id_event' => $id_event));
             $result['ticket'] = $query->result_array();
-
             return $result;
         } 
         return false;

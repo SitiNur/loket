@@ -24,6 +24,7 @@ class Dashboard extends CI_Controller {
 		
 	}
 
+	// Add Event Function
 	public function addEvent(){
 		$config['upload_path']          = './assets/eventimage/';
         $config['allowed_types']        = 'gif|jpg|png';
@@ -72,11 +73,11 @@ class Dashboard extends CI_Controller {
 				}else{
 					echo json_encode(array('return'=>'false'));
 				}
-        
         }		
 	
 	}
 
+	//detail event function
 	public function detailEvent(){
 		$id_event = $this->input->post('id_event');
 		$data = $this->Dashboard_model->detailEvent($id_event);
@@ -87,6 +88,7 @@ class Dashboard extends CI_Controller {
 		}
 	}
 
+	//update event function
 	public function updateEvent(){
 		$config['upload_path']          = './assets/eventimage/';
         $config['allowed_types']        = 'gif|jpg|png';
@@ -150,6 +152,7 @@ class Dashboard extends CI_Controller {
 		}
 	}
 
+	//delete event function
 	public function deleteEvent(){
 		$id_event = $this->input->post('id_event');	
 		if($this->Dashboard_model->deleteEvent($id_event)){

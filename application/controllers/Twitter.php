@@ -78,8 +78,8 @@ class Twitter extends CI_Controller
 			else
 			{
 				// An error occured. Make sure to put your error notification code here.
-				//redirect(base_url('/'));
-				print_r("b");
+				// redirect(base_url('/'));
+				print_r($this->connection->http_code);
 			}
 		}
 	}

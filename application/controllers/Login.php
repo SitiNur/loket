@@ -26,8 +26,6 @@ class Login extends CI_Controller {
 		$res = $this->Login_model->login($data);
 		
 		if($res != false){
-			
-
 			$this->session->set_userdata('id_user', $res['id_user']);
 			$this->session->set_userdata('first_name', $res['first_name']);
 
