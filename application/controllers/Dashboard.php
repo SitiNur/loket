@@ -26,9 +26,9 @@ class Dashboard extends CI_Controller {
 	public function addEvent(){
 		$config['upload_path']          = './assets/eventimage/';
         $config['allowed_types']        = 'gif|jpg|png';
-        $config['max_size']             = 100;
-        $config['max_width']            = 1024;
-        $config['max_height']           = 768;
+        $config['max_size']             = 500;
+        $config['max_width']            = 2048;
+        $config['max_height']           = 2048;
         $config['encrypt_name'] 		= TRUE;
 
         
@@ -40,14 +40,16 @@ class Dashboard extends CI_Controller {
                 echo json_encode(array('return'=>'false', 'error_msg'=>'failed to upload', 'error'=> $error));
         }else{
                 $temp = $this->upload->data();
-                $file_path = $temp['file_path'].$temp['file_name'];
+                $temp = $temp['file_path'].$temp['file_name'];
+                $temp = explode('/', $temp, 5);
+                $file_path = $temp[4];
       
                	$event= array(
 					'id_user' => $this->input->post('id_user'),
 					'title' => $this->input->post('title'),
 					'description' => $this->input->post('description'),
 					'datetime' => $this->input->post('datetime'),
-					'location' => $this->input->post('location'),
+					'id_location' => $this->input->post('location'),
 					'event_file' => $file_path
 				);
 

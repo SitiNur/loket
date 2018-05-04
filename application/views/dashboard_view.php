@@ -117,7 +117,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <select class="form-control" id="location" placeholder="location">
                                 <option selected="true" disabled="disabled">Choose Location</option>
                                 <?php foreach ($location_option as $i) { ?>
-                                    <option value="<?php $i['id_location']?>"><?php echo $i['location']?></option>
+                                    <option value="<?php echo $i['id_location']?>"><?php echo $i['location']?></option>
                                 <?php } ?>
                                 
                             </select>
@@ -182,7 +182,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <select class="form-control" id="eLocation" placeholder="location">
                                 <option selected="true" disabled="disabled">Choose Location</option>
                                 <?php foreach ($location_option as $i) { ?>
-                                    <option value="<?php $i['id_location']?>"><?php echo $i['location']?></option>
+                                    <option value="<?php echo $i['id_location']?>"><?php echo $i['location']?></option>
                                 <?php } ?>
                                 
                             </select>
@@ -196,20 +196,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </span>
                             </div>
                         </div>
+
                         <div class="form-group col-md-6" >
+                            <a id="download-img" href="#" download>
+                                <img id="event-img" border="0" src="" alt="event-img" width="20%">
+                            </a>
+                        </div>
+
+                        <div class="form-group col-md-6">
                             <input id="userfile" type="file" name="userfile" class="form-control">
                         </div>
 
                          <div class="form-group col-md-6" >
                             <input type="number" class="form-control typeTicket" id="eTypeTicket" name="typeTicket" placeholder="Number of ticket types">
                         </div>
-                        <div class="form-group col-md-6">
-                            <input type="text" name="ticket[]" class="form-control" placeholder="Type of ticket">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <input type="number" name="price[]" class="form-control" placeholder="Price">
-                        </div>
-                         
+
                         <div class="ticket">
                         </div>
 
@@ -324,7 +325,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             type: 'POST',
             dataType : 'JSON' ,
             success: function(data){
-
+                if(data.return == 'true'){
+                   location.reload();
+                }else{
+                    alert(data.error.error);
+                }
             },
         });
 
@@ -351,16 +356,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $('#eTitle').val(res['data']['event']['title']);
                     $('#eDescription').val(res['data']['event']['description']);
                     $('#eDatetime').val(res['data']['event']['datetime']);
-                    $('#eLocation').val(res['data']['event']['location']);
+                    $("#eLocation").val(res['data']['event']['id_location']).change();
+                    $("#download-img").prop("href", "<?php echo base_url()?>"+res['data']['event']['event_file']);
+                    $("#event-img").attr("src", res['data']['event']['event_file']);
                     
+                    console.log("<?php echo base_url()?>"+res['data']['event']['event_file']);
                     var length = res['data']['ticket'].length;
-                    console.log(res['data']['ticket']);
+                    $('#eTypeTicket').val(length);
+                   
                     for(var i=0; i<length; i++){
-                        $(".ticket").append(
-                            '<input type="hidden" name="id_ticket[]" value="'+res['data']['ticket'][i]['id_ticket']+'">'+
-                            '<input type="text" name="eTicket[]" value="'+res['data']['ticket'][i]['name']+'">'+
-                            '<input type="text" name="ePrice[]" value="'+res['data']['ticket'][i]['price']+'">');
-
+                        $(".ticket").append('<input type="hidden" name="id_ticket[]" value="'+res['data']['ticket'][i]['id_ticket']+'">'+
+                        '<div class="form-group col-md-6">'+
+                            '<input type="text" name="eTicket[]" class="form-control" placeholder="Type of ticket" value="'+res['data']['ticket'][i]['name']+'">'+
+                       '</div>'+
+                        '<div class="form-group col-md-6">'+
+                            '<input type="number" name="price[]" class="form-control" placeholder="Price" value="'+res['data']['ticket'][i]['price']+'">'+
+                        '</div>');
                     }
                 }
             },
