@@ -78,7 +78,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <a href="<?php echo base_url()."detail/index/".base64_encode($row['id_event'])?>" class="btn btn-default">Detail
                                 </a>
                                 <?php if(isset($this->session->userdata['twitter_user_id'])){?>
-                                     <a id="<?php echo base64_encode($row['id_event'])?>" href="<?php echo base_url()."twitter/post/".base64_encode($row['id_event'])?>" class="btn btn-circle btn-info share">Share
+                                     <a id="<?php echo base64_encode($row['id_event'])?>" href="<?php echo base_url()."twitter/post/".base64_encode($row['id_event'])."/".base64_encode($row['title'])?>" class="btn btn-circle btn-info share">Post to Twitter
                                     </a>
                                 <?php } ?>
                                 <a id="edit_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalEdit" class="btn btn-warning edit">Edit

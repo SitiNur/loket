@@ -140,9 +140,11 @@ class Twitter extends CI_Controller
 		}
 	}
 	
-	public function post($share_link)
+	public function post($share_link, $title)
 	{
-		$message = "(".uniqid().") Lets check our event ".$share_link;
+		$title = base64_decode($title);
+		$share_link = base_url()."detail/index/".$share_link;
+		$message = "(".uniqid().") Please see my ".$title." here : ".$share_link;
 		if(!$message || mb_strlen($message) > 140 || mb_strlen($message) < 1)
 		{
 			// Restrictions error. Notification here.
