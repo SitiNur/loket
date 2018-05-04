@@ -13,10 +13,6 @@ class Detail extends CI_Controller {
 	public function index($id_event){
 		$id_event = base64_decode($id_event);
 		$data = $this->Dashboard_model->detailEvent($id_event);
-		if($data != false){
-			print_r(array('return'=>'true', 'data'=> $data));
-		}else{
-			print_r(array('return'=>'false'));
-		}
+		$this->load->view('eventDetail_view', $data);
 	}
 }

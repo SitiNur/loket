@@ -6,7 +6,7 @@ class Detail_model extends CI_Model{
         
     }
 
-    public function detailEvent($id_event){
+     public function detailEvent($id_event){
     	$this->db->select('*');
         $this->db->where(array('id_event'=> $id_event));
         $this->db->from('tb_event');
@@ -22,5 +22,6 @@ class Detail_model extends CI_Model{
         } 
         return false;
     }
+
 
 }

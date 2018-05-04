@@ -165,39 +165,55 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Add Event</h4>
+                        <h4 class="modal-title">Edit Event Data</h4>
                     </div>
-                     <form id="addForm" action="<?php echo base_url()?>dashboard/addEvent" method="post">
+                    <form id="editForm">
                     <input id="id_event" type="hidden" name="id_event">
                     <div class="modal-body">
-                            <div class="form-group">
-                                <label>Event : </label>
-                                <input id="eTitle" type="text" name="title">
+
+                        <div class="form-group col-md-12">
+                            <input type="text" class="form-control" id="eTitle" name="title" placeholder="Event title">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <textarea class="form-control" id="eDescription" name="description" rows="3" placeholder="Description"></textarea>
+                        </div>
+                        
+                        <div class="form-group col-md-6">
+                            <select class="form-control" id="eLocation" placeholder="location">
+                                <option selected="true" disabled="disabled">Choose Location</option>
+                                <?php foreach ($location_option as $i) { ?>
+                                    <option value="<?php $i['id_location']?>"><?php echo $i['location']?></option>
+                                <?php } ?>
+                                
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <div class='input-group date' id='datetimepicker5'>
+                                <input id="eDatetime" name="datetime" type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
                             </div>
-                            <div class="form-group">
-                                <label>Description : </label>
-                                <input id="eDescription" type="text" name="description">
-                            </div>
-                            <div class="form-group">
-                                <label>Date and Time : </label>
-                                <input id="eDatetime" type="text" name="datetime">
-                            </div>
-                            <div class="form-group">
-                                <label>Location : </label>
-                                <input id="eLocation" type="text" name="location">
-                            </div>
-                             <div class="form-group">
-                                <label>Type Ticket : </label>
-                                <input id="eTypeTicket" class="typeTicket" type="number" name="typeTicket">
-                            </div>
-                    
-                            <div class="form-group ">
-                                <label>Ticket : </label>
-                                <label>Price</label>
-                                <div class="ticket">
-                                    
-                                </div>
-                            </div>
+                        </div>
+                        <div class="form-group col-md-6" >
+                            <input id="userfile" type="file" name="userfile" class="form-control">
+                        </div>
+
+                         <div class="form-group col-md-6" >
+                            <input type="number" class="form-control typeTicket" id="eTypeTicket" name="typeTicket" placeholder="Number of ticket types">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="text" name="ticket[]" class="form-control" placeholder="Type of ticket">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input type="number" name="price[]" class="form-control" placeholder="Price">
+                        </div>
+                         
+                        <div class="ticket">
+                        </div>
+
+    
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
