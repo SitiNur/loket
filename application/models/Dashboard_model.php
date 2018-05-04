@@ -53,8 +53,10 @@ class Dashboard_model extends CI_Model{
 		$this->db->where('id_event', $id_event);
 		$this->db->update('tb_event', $event);
 
+        $this->db->delete('tb_ticket', array('id_event' => $id_event));  
+
     	for($i=0; $i<sizeof($dataTicket); $i++){
-    		$this->db->replace('tb_ticket', $dataTicket[$i]);
+    		$this->db->insert('tb_ticket', $dataTicket[$i]);
     	}
     	
     	if ($this->db->trans_status() === FALSE){
@@ -64,5 +66,21 @@ class Dashboard_model extends CI_Model{
 		    $this->db->trans_commit();
 		    return true;
 		}
+    }
+
+    public function deleteEvent($id_event){
+        $this->db->trans_begin();
+
+        
+        $this->db->delete('tb_event', array('id_event' => $id_event));  
+        $this->db->delete('tb_ticket', array('id_event' => $id_event));
+        
+        if ($this->db->trans_status() === FALSE){
+            $this->db->trans_rollback();
+            return false;
+        }else{
+            $this->db->trans_commit();
+            return true;
+        }
     }
 }

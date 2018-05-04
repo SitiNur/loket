@@ -41,8 +41,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"> <a href="#">Dashboard</a></li>
-            <li><a href="">Profile</a></li>
-             <li><a href="">Hello <?php echo $this->session->userdata['first_name'];?></a></li>
             <li><a href="<?php echo base_url()?>login/logout">Log Out</a></li>
           </ul>
         </div><!--/.nav-collapse -->
@@ -52,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <!-- Begin page content -->
     <div class="container">
         <div class="page-header">
-            <h3 style="width: 50%">Dashboard</h3> 
+            <h3 style="width: 50%">Hello <?php echo $this->session->userdata['first_name'];?></h3> 
              <div class="btn-group btn-group-devided">
                 <a data-toggle="modal" href="#modalAdd" class="btn btn-circle btn-primary add">Add Event
                 </a>
@@ -80,8 +78,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td> 
                                 <a href="<?php echo base_url()."detail/index/".base64_encode($row['id_event'])?>" class="btn btn-default">Detail
                                 </a>
-                                <a id="<?php echo base64_encode($row['id_event'])?>" href="#" class="btn btn-circle btn-info share">Share
-                                </a>
+                                <?php if(isset($this->session->userdata['twitter_user_id'])){?>
+                                     <a id="<?php echo base64_encode($row['id_event'])?>" href="<?php echo base_url()."twitter/post/".base64_encode($row['id_event'])?>" class="btn btn-circle btn-info share">Share
+                                    </a>
+                                <?php } ?>
                                 <a id="edit_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalEdit" class="btn btn-warning edit">Edit
                                 </a>
                                 <a id="del_<?php echo $row['id_event']?>" data-toggle="modal" href="#modalDelete" class="btn btn-danger del"> Delete
@@ -199,12 +199,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                         <div class="form-group col-md-6" >
                             <a id="download-img" href="#" download>
-                                <img id="event-img" border="0" src="" alt="event-img" width="20%">
+                                <img id="event-img" border="0" src="" alt="event-img" style="max-height: 80px">
                             </a>
                         </div>
 
                         <div class="form-group col-md-6">
-                            <input id="userfile" type="file" name="userfile" class="form-control">
+                            <input id="eUserfile" type="file" name="eUserfile" class="form-control">
                         </div>
 
                          <div class="form-group col-md-6" >
@@ -218,7 +218,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success edit">Edit</button>
                         <button type="button" class="btn btn-success update">Save</button>
                     </div>
                     </form>
@@ -235,13 +234,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title"></h4>
+                        <h4 class="modal-title">Delete Event</h4>
                     </div>
                     <div class="modal-body">
+                        Are you sure?
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success save">Save</button>
+                        <form action="<?php echo base_url()?>dashboard/deleteEvent" method="post">
+                            <input type="hidden" name="id_event" id="id_event_del">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                            <button type="submit" class="btn btn-success delete">Yes</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -260,8 +263,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </body>
 
 <script type="text/javascript">
-    var id_user = '<?php echo $this->session->userdata['id_user']?>'; 
+    <?php if($notif !=""){ ?>
+        alert("<?php echo $notif;?>");
+    <?php } ?>
 
+    var id_user = '<?php echo $this->session->userdata['id_user']?>'; 
+    var lastTypeTicket = "";
     $('#myTable').DataTable( {
     responsive: true,
         "columnDefs": [
@@ -279,9 +286,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     });
    
     
-    $('body').on('change', ".typeTicket", function(){
+    $('body').on('change', "#typeTicket", function(){
         $(".additional").html('');
-        var typeTicket = $('.typeTicket').val();
+        var typeTicket = $('#typeTicket').val();
+        if(typeTicket < 1){
+            alert("Minimal number of ticket is 1");
+            $('#typeTicket').val('1');
+        }
         for (var i=0; i<typeTicket-1; i++){
             $(".additional").append('<div class="form-group col-md-6">'+
                             '<input type="text" name="ticket[]" class="form-control" placeholder="Type of ticket">'+
@@ -293,12 +304,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
     });
 
+    $('body').on('change', "#eTypeTicket", function(){
+        var typeTicket = $('#eTypeTicket').val();
+        console.log(typeTicket);
+        if(typeTicket < 1){
+            alert("Minimal number of ticket is 1");
+            $('#eTypeTicket').val('1');
+        }
+        typeTicket = $('#eTypeTicket').val();
+        $('.ticket').html('');
+        for (var i=0; i<typeTicket; i++){
+            $(".ticket").append('<div class="form-group col-md-6" >'+
+                            '<input type="text" name="eTicket[]" class="form-control" placeholder="Type of ticket">'+
+                        '</div>'+
+                        '<div class="form-group col-md-6">'+
+                            '<input type="number" name="ePrice[]" class="form-control" placeholder="Price">'+
+                        '</div>');
+        }
+        
+    });
+
 
     $('body').on('click', ".save", function(){
         var form = $("#addForm");
         var fd = new FormData();
         fd.append('id_user',id_user);
-        fd.append('userfile', $('#userfile')[0].files[0])
+        fd.append('userfile', $('#userfile')[0].files[0]);
         fd.append('title', $('#title').val());
         fd.append('description', $('#description').val());
         fd.append('datetime', $('#datetime').val()+':00');
@@ -336,6 +367,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     });
 
     $('body').on('click', ".edit", function(){
+        $(".ticket").html('');
         var id_event = $(this).attr('id');
         id_event = id_event.split('_'); 
         id_event = id_event[1];
@@ -360,17 +392,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $("#download-img").prop("href", "<?php echo base_url()?>"+res['data']['event']['event_file']);
                     $("#event-img").attr("src", res['data']['event']['event_file']);
                     
-                    console.log("<?php echo base_url()?>"+res['data']['event']['event_file']);
+                
                     var length = res['data']['ticket'].length;
                     $('#eTypeTicket').val(length);
+                    lastTypeTicket = length;
                    
                     for(var i=0; i<length; i++){
-                        $(".ticket").append('<input type="hidden" name="id_ticket[]" value="'+res['data']['ticket'][i]['id_ticket']+'">'+
-                        '<div class="form-group col-md-6">'+
+                        $(".ticket").append('<div class="form-group col-md-6">'+
                             '<input type="text" name="eTicket[]" class="form-control" placeholder="Type of ticket" value="'+res['data']['ticket'][i]['name']+'">'+
                        '</div>'+
                         '<div class="form-group col-md-6">'+
-                            '<input type="number" name="price[]" class="form-control" placeholder="Price" value="'+res['data']['ticket'][i]['price']+'">'+
+                            '<input type="number" name="ePrice[]" class="form-control" placeholder="Price" value="'+res['data']['ticket'][i]['price']+'">'+
                         '</div>');
                     }
                 }
@@ -388,12 +420,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         fd.append('datetime', $('#eDatetime').val());
         fd.append('location', $('#eLocation').val());
         fd.append('typeTicket', $('#eTypeTicket').val());
-
-        var id_ticket = [];
-        $("input[name^='id_ticket']").each(function () {
-            id_ticket.push($(this).val());
-        });
-        fd.append('id_ticket',  id_ticket);
+        fd.append('userfile', $('#eUserfile')[0].files[0]);
 
         var ticket = [];
         $("input[name^='eTicket']").each(function () {
@@ -415,27 +442,38 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             type: 'POST',
             dataType : 'JSON' ,
             success: function(data){
-
+                if(data.return == 'true'){
+                   location.reload();
+                }else{
+                    alert(data.error.error);
+                }
             },
         });
 
     });
 
-    $('body').on('click', ".share", function(){
-        var share_link = "<?php echo base_url()?>"+"detail/index/"+$(this).attr('id');
+    // $('body').on('click', ".share", function(){
+    //     var share_link = "<?php echo base_url()?>"+"detail/index/"+$(this).attr('id');
         
-        var fd = new FormData();
-        fd.append('share_link', share_link);
-        $.ajax({
-            url: '<?php echo base_url()?>twitter/post',
-            data: fd,
-            processData: false,
-            contentType: false,
-            type: 'POST',
-            dataType : 'JSON' ,
-            success: function(data){
+    //     var fd = new FormData();
+    //     fd.append('share_link', share_link);
+    //     $.ajax({
+    //         url: '<?php echo base_url()?>twitter/post',
+    //         data: fd,
+    //         processData: false,
+    //         contentType: false,
+    //         type: 'POST',
+    //         dataType : 'JSON' ,
+    //         success: function(data){
 
-            },
-        });
+    //         },
+    //     });
+    // });
+
+    $('body').on('click', ".del", function(){
+        var id_event = $(this).attr('id');
+        id_event = id_event.split('_'); 
+        id_event = id_event[1];
+        $('#id_event_del').val(id_event);
     });
 </script>

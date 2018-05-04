@@ -10,12 +10,13 @@ class Dashboard extends CI_Controller {
 			
 		}
 
-	public function index()
+	public function index($notif = "")
 	{
 		if($this->session->userdata('id_user')){
 			$id_user = $this->session->userdata['id_user'];
 			$data['result'] = $this->Login_model->getListEvent($id_user);
 			$data['location_option'] = $this->Dashboard_model->getLocationOption();
+			$data['notif'] = $notif;
 			$this->load->view('dashboard_view', $data);
 		}else{
 			redirect(base_url());
@@ -31,7 +32,6 @@ class Dashboard extends CI_Controller {
         $config['max_height']           = 2048;
         $config['encrypt_name'] 		= TRUE;
 
-        
         $this->load->library('upload');
         $this->upload->initialize($config);
 
@@ -88,18 +88,44 @@ class Dashboard extends CI_Controller {
 	}
 
 	public function updateEvent(){
+		$config['upload_path']          = './assets/eventimage/';
+        $config['allowed_types']        = 'gif|jpg|png';
+        $config['max_size']             = 500;
+        $config['max_width']            = 2048;
+        $config['max_height']           = 2048;
+        $config['encrypt_name'] 		= TRUE;
+
+	    $this->load->library('upload');
+	    $this->upload->initialize($config);
+
+
 		$id_event = $this->input->post('id_event');
-		echo $id_event;
+		
 		$event= array(
 			'title' => $this->input->post('title'),
 			'description' => $this->input->post('description'),
 			'datetime' => $this->input->post('datetime'),
-			'location' => $this->input->post('location'),
+			'id_location' => $this->input->post('location'),
 		);
+		
 
+		if (!empty($_FILES['userfile']['name'])) {
+	        $error = "";
+	        if (!$this->upload->do_upload('userfile')){
+	            $error = array('error' => $this->upload->display_errors());
+	            
+	        }else{
+                $temp = $this->upload->data();
+                $temp = $temp['file_path'].$temp['file_name'];
+                $temp = explode('/', $temp, 5);
+                $file_path = $temp[4];
+
+                $event['event_file'] = $file_path;
+			}
+
+		}
+		
 		$typeTicket = intval($this->input->post('typeTicket'));
-		$id_ticket = $this->input->post('id_ticket');
-		$id_ticket = explode(',', $id_ticket);
 		$ticket = $this->input->post('ticket');
 		$ticket = explode(',', $ticket);
 		$price = $this->input->post('price');
@@ -108,17 +134,28 @@ class Dashboard extends CI_Controller {
 		
 		for($i=0; $i<$typeTicket; $i++){
 			$dataTicket[$i] = array(
-				'id_ticket' =>$id_ticket[$i],
+				'id_event' => $id_event,
 				'name' => $ticket[$i],
 				'price' => $price[$i],
 			); 	
 		}
-		
-		if($this->Dashboard_model->updateEvent($id_event, $event, $dataTicket)){
-			echo json_encode(array('return'=>'true'));
+		if(!empty($_FILES['userfile']['name']) && $error != "") {
+			echo json_encode(array('return'=>'false', 'error_msg'=>'failed to upload', 'error'=> $error));
 		}else{
-			echo json_encode(array('return'=>'false'));
+			if($this->Dashboard_model->updateEvent($id_event, $event, $dataTicket)){
+				echo json_encode(array('return'=>'true'));
+			}else{
+				echo json_encode(array('return'=>'false'));
+			}
 		}
-	
+	}
+
+	public function deleteEvent(){
+		$id_event = $this->input->post('id_event');	
+		if($this->Dashboard_model->deleteEvent($id_event)){
+			redirect(base_url()."dashboard");
+		}else{
+			redirect(base_url()."dashboard");
+		}
 	}
 }

@@ -140,9 +140,8 @@ class Twitter extends CI_Controller
 		}
 	}
 	
-	public function post()
+	public function post($share_link)
 	{
-		$share_link = $this->input->post('share_link');
 		$message = "(".uniqid().") Lets check our event ".$share_link;
 		if(!$message || mb_strlen($message) > 140 || mb_strlen($message) < 1)
 		{
@@ -171,14 +170,13 @@ class Twitter extends CI_Controller
 					if(!isset($result->errors))
 					{
 						// Everything is OK
-						//redirect(base_url('/'));
-						print_r("OK");
+						redirect(base_url('/dashboard/index/sharesucces'));
+						
 					}
 					else
 					{
 						// Error, message hasn't been published
-						//redirect(base_url('/'));
-						print_r($result->errors);
+						redirect(base_url('/dashboard/index/sharefailed'));
 					}
 				}
 			}
