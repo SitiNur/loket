@@ -11,6 +11,3 @@ Untuk spesifikasi poin 3 yaitu, text yang di share saya tambahkan kode unik, kar
 tes1
 tes2
 tes3
-tes4
-tes5
-tes6
